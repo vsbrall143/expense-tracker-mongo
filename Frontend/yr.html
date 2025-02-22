@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Table</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+ 
+    
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+ 
+        <!-- Toggler button for small screens -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav ms-auto">
+            <a class="nav-item nav-link " href="daily.html">Daily</a>
+            <a class="nav-item nav-link" href="monthly.html">Monthly</a>
+            <a class="nav-item nav-link active" href="yr.html">Yearly</a>
+            <a class="nav-item nav-link"  class="leaderboard" id="leaderboard"   href="leaderboard.html" onclick="leaderboard()"  >leaderboard</a>
+            <a class="nav-item nav-link" href="login.html">log-out</a>  
+          </div>
+        </div>
+      </div>
+    </nav>
+
+ 
+<br>
+
+
+<div class="container">
+  <button class="arrow left"  onclick="handleYearNavigation(-1)" id="prevDate">&lt;</button>
+  <div class="content">
+      <div class="date" onclick="handleOnTap()" >
+ 
+          <div class="month-year">
+ 
+             <h1><span class="year"></span></h1> 
+          </div>
+
+      </div>
+      <div class="savings">
+          <span>TOTAL AMOUNT </span>
+          <h1><span id="Total">rs5,440.00</span></h1>
+      </div>
+  </div>
+  <button class="arrow right" onclick="handleYearNavigation(1)" id="nextDate">&gt;</button>
+</div>
+ 
+<!-- Hidden Date Picker -->
+<div style="opacity: 0%" class="date-picker">
+  <input type="date" onchange="handleYearChange()" id="dateInput" onfocus="this.showPicker()">
+</div>
+
+ 
+ 
+ 
+<form id="exampleForm"></form>
+ 
+<h1><ul id="year-list"></ul></h1>
+ 
+ <!-- Popup Circular Download Button -->
+ <div id="downloadButton" class="circular-download-btn">
+  <button class="btn" onclick="handleDownload()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
+      <path d="M12 0c6.627 0 12 5.373 12 12s-5.373 12-12 12-12-5.373-12-12 5.373-12 12-12zm-.5 6v7.293l-2.293-2.293-1.414 1.414 5 5 5-5-1.414-1.414-2.293 2.293v-7.293h-2zm5.5 13v2h-12v-2h12z"/>
+    </svg>
+  </button>
+</div>
+ 
+
+
+
+    <h1>Expenses</h1>
+    <table id="expenseTable">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Total Credit</th>
+          <th>Total Debit</th>
+ 
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table rows will be dynamically added here -->
+      </tbody>
+    </table>
+    
+
+    <script src="http://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index.js"></script>
+    <script src="yr.js"></script>
+  </body>
+</html>
