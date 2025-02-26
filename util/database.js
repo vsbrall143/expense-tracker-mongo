@@ -9,9 +9,6 @@ module.exports = sequelize;
  
 
 
-
-
-
 // const Sequelize = require('sequelize');
 
 // require("dotenv").config();

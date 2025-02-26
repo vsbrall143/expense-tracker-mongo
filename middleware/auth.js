@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/SignupUser');
+const User = require('../models/User');
 
 const auth = async (req, res, next) => {
     try {
@@ -19,14 +19,12 @@ const auth = async (req, res, next) => {
 
         // Extract email from the payload
         const email = decoded?.email;
- 
-        if (!email ) {
+        if (!email) {
             return res.status(401).json({ success: false, message: 'Invalid token payload' });
         }
 
-        // Fetch the user from the database using the email
-        const user = await User.findOne({ where: { email } });
-        console.log("-----------------------------user------------------------------",user.email);
+        // Fetch the user from MongoDB using email
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
@@ -40,22 +38,30 @@ const auth = async (req, res, next) => {
     }
 };
 
-const au = (req, res, next) => {
-    try{
-        const token=req.header('Authorization');
-        console.log(token);
-        const user=jwt.verify(token,'8hy98h9yu89y98yn89y98y89');
-        console.log('userID >>>',user.email)
-        User.findByPk(user.email).then(user=>{
-            console.log(user);
-            req.user=user;
-            next();
-        })
-    }catch(err){
-        console.log(err);
-        return res.status(401).json({sucess:false});
+const au = async (req, res, next) => {
+    try {
+        const token = req.header('Authorization');
+        if (!token) {
+            return res.status(401).json({ success: false, message: 'No token provided' });
+        }
 
+        // Verify token
+        const decoded = jwt.verify(token, '8hy98h9yu89y98yn89y98y89');
+        console.log('User Email >>>', decoded.email);
+
+        // Find user in MongoDB
+        const user = await User.findOne({ email: decoded.email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        console.log('Authenticated User:', user);
+        req.user = user;
+        next();
+    } catch (err) {
+        console.error('Authentication Error:', err);
+        return res.status(401).json({ success: false, message: 'Invalid token' });
     }
-}
+};
 
-module.exports = {auth,au};
+module.exports = { auth, au };

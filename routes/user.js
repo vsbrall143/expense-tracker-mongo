@@ -2,7 +2,7 @@ const path = require('path');
 
 const express = require('express');
 
-const adminController = require('../controllers/user');
+const userController = require('../controllers/user');
 const purchaseController = require('../controllers/purchase');
 const passwordController = require('../controllers/password');
 
@@ -28,21 +28,22 @@ router.get('/password/updatepassword/:resetpasswordid', passwordController.updat
 
 
 router.get('/download', auth.au, downloadController.downloadExpenses)
+
 router.get('/get-downloads', auth.au, downloadController.getDownloads)
 
-router.post('/user/add-user',auth.au, adminController.postUser) //middle ware auth.au is added to add retrieve email id form header and add it to request for easy working in controllers
+router.post('/user/add-user',auth.au, userController.postUser) //middle ware auth.au is added to add retrieve email id form header and add it to request for easy working in controllers
 
-router.get('/user/get-expenses/:year' ,auth.au, adminController.getYearExpenses)//email is added in header because it can be added to both get and post requests
+router.get('/user/get-expenses/:year' ,auth.au, userController.getYearExpenses)//email is added in header because it can be added to both get and post requests
 
-router.get('/user/get-expenses/:month/:year/:rows' ,auth.au, adminController.getMonthExpenses)
+router.get('/user/get-expenses/:month/:year/:rows' ,auth.au, userController.getMonthExpenses)
 
-router.delete('/user/delete-expenses/:id' ,auth.au, adminController.deleteMonthExpense)
+router.delete('/user/delete-expenses/:id' ,auth.au, userController.deleteMonthExpense)
 
-router.get('/user/get-expense/:day/:month/:year',auth.au, adminController.getExpense)  //req will go to authentication middle ware then to admin controller if sucessful
+router.get('/user/get-expense/:day/:month/:year',auth.au, userController.getExpense)  //req will go to authentication middle ware then to admin controller if sucessful
   
-router.post('/user/signup', adminController.postsignup)
+router.post('/user/signup', userController.postSignup)
 
-router.post('/user/login', adminController.postlogin)
+router.post('/user/login', userController.postLogin)
  
 
 module.exports = router;

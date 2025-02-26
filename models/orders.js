@@ -1,26 +1,11 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database'); // Corrected the path reference
+const mongoose = require('mongoose');
 
-// Define the Order model with appropriate fields
-const Order = sequelize.define('order', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
-    paymentid: {
-        type: Sequelize.STRING,
-                                 // Payment ID may be null initially for pending orders
-    },
-    orderid: {
-        type: Sequelize.STRING,
- 
-    },
-    status: {
-        type: Sequelize.STRING,
- 
-    }
+const orderSchema = new mongoose.Schema({
+    paymentid: { type: String, default: null },
+    orderid: { type: String, required: true },
+    status: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference to User
 });
 
+const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;

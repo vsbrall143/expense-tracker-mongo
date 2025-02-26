@@ -1,31 +1,24 @@
 require('dotenv').config();
-const Expense=require('../models/User')
-const signup=require('../models/SignupUser')
-const bcrypt=require('bcryptjs');
-const jwt=require('jsonwebtoken');
-// const { Op } = require('sequelize');
-const sequelize=require('../util/database'); 
-const Downloads=require('../models/downloads');
-// const { v1: uuidv1} = require('uuid');
-// const { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } = require('@azure/storage-blob');
- 
+const Expense = require('../models/Expense');
+const User = require('../models/User');
+const Downloads = require('../models/Downloads');
 
-require('dotenv').config();
- 
-  
 const { v1: uuidv1 } = require('uuid');
 const { BlobServiceClient, StorageSharedKeyCredential, generateBlobSASQueryParameters, BlobSASPermissions } = require('@azure/storage-blob');
- 
 
+exports.getDownloads = async (req, res, next) => {
+  try {
+    const email = req.user.email;
+    const downloads = await Downloads.find({ signupEmail: email });
 
-exports.getDownloads = async(req,res,next)=>{
-  const email = req.user.email;
-  const downloads = await Downloads.findAll({where: {signupEmail: email}});
-  res.status(200).json({downloads});
-}
+    res.status(200).json({ downloads });
+  } catch (err) {
+    console.error('Error fetching downloads:', err);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
 
-
-exports.downloadExpenses = async (req, res,next) => {
+exports.downloadExpenses = async (req, res, next) => {
   try {
     console.log("Processing download request...");
 
@@ -33,12 +26,10 @@ exports.downloadExpenses = async (req, res,next) => {
     const AZURE_STORAGE_ACCOUNT_KEY = process.env.AZURE_STORAGE_ACCOUNT_KEY;
 
     if (!AZURE_STORAGE_ACCOUNT_NAME || !AZURE_STORAGE_ACCOUNT_KEY) {
-      return res.status(500).json({ success: false, message: 'Azure storage account name or key is not defined.' });
+      return res.status(500).json({ success: false, message: 'Azure storage account name or key is missing.' });
     }
 
-    // Use StorageSharedKeyCredential for authentication
     const credential = new StorageSharedKeyCredential(AZURE_STORAGE_ACCOUNT_NAME, AZURE_STORAGE_ACCOUNT_KEY);
-
     const blobServiceClient = new BlobServiceClient(
       `https://${AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net`,
       credential
@@ -55,38 +46,39 @@ exports.downloadExpenses = async (req, res,next) => {
     const blobName = `expenses-${uuidv1()}.html`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    // Fetch data from the database
- 
-    const expensesRaw = await req.user.getExpenses(); // Assuming this fetches Sequelize model instances
-    const expenses = expensesRaw.map(expense => expense.get({ plain: true })); // Convert to plain objects
+    // Fetch expenses from MongoDB
+    const email = req.user.email;
+    const expenses = await Expense.find({ signupEmail: email }).lean(); // Convert documents to plain objects
+
+    if (expenses.length === 0) {
+      return res.status(404).json({ success: false, message: 'No expenses found to download.' });
+    }
 
     // Convert data to HTML table
     const htmlData = convertToHTMLTable(expenses);
 
-    // Upload the HTML file to Azure Blob
+    // Upload HTML file to Azure Blob Storage
     const uploadBlobResponse = await blockBlobClient.upload(htmlData, Buffer.byteLength(htmlData));
     console.log('HTML file uploaded successfully:', uploadBlobResponse.requestId);
 
-    // Generate SAS token
+    // Generate SAS token for secure access
     const sasToken = generateBlobSASQueryParameters({
       containerName,
       blobName,
       permissions: BlobSASPermissions.parse("r"), // Read-only permission
       startsOn: new Date(),
-      expiresOn: new Date(new Date().valueOf() + 3600 * 1000) // 1 hour expiry
+      expiresOn: new Date(Date.now() + 3600 * 1000) // 1 hour expiry
     }, credential).toString();
 
-    // File URL with SAS token
     const fileUrl = `${blockBlobClient.url}?${sasToken}`;
 
-    const email=req.user.email;
-
-    const data = await Downloads.create({url:fileUrl,signupEmail:email});
+    // Save the download record in MongoDB
+    await Downloads.create({ url: fileUrl, signupEmail: email });
 
     res.status(201).json({ fileUrl, success: true });
   } catch (err) {
     console.error('Error:', err);
-    res.status(500).json({ error: err, success: false, message: 'Something went wrong.' });
+    res.status(500).json({ success: false, message: 'Something went wrong.' });
   }
 };
 
@@ -103,18 +95,9 @@ function convertToHTMLTable(data) {
     <html>
     <head>
       <style>
-        table {
-          border-collapse: collapse;
-          width: 100%;
-        }
-        th, td {
-          border: 1px solid black;
-          padding: 8px;
-          text-align: left;
-        }
-        th {
-          background-color: #f2f2f2;
-        }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
       </style>
     </head>
     <body>
@@ -128,13 +111,13 @@ function convertToHTMLTable(data) {
   `;
 }
 
- 
-  const getexpenses = (req, res)=> {
+exports.getExpenses = async (req, res) => {
+  try {
+    const expenses = await Expense.find({ signupEmail: req.user.email });
 
-    req.user.getExpenses().then(expenses => {
-        return res.status(200).json({expenses, success: true})
-    })
-    .catch(err => {
-        return res.status(402).json({ error: err, success: false})
-    })
-}
+    res.status(200).json({ expenses, success: true });
+  } catch (err) {
+    console.error('Error fetching expenses:', err);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};

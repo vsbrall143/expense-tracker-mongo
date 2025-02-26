@@ -12,7 +12,7 @@ function populateTable(data) {
       const row = tableBody.insertRow();
       
       row.innerHTML = `
-        <td>${item.month}</td>
+        <td>${item._id}</td>
         <td>${item.totalCredit }</td>
         <td>${item.totalDebit }</td>
         `;
@@ -48,7 +48,7 @@ function populateTable(data) {
           headers: { Authorization: token },
         }
       );
-      console.log("Response data:", response.data);
+      console.log("Response data:", response.data.expenses[0]);
       populateTable(response.data.expenses); // Use fetched data
     } catch (error) {
       console.error("Error fetching expenses:", error);

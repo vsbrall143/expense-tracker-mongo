@@ -148,7 +148,7 @@ async function handleMonthChange() {
   }
 
   yearElement.textContent = year;
-  monthElement.textContent = `${month},`;
+  monthElement.textContent = `${month}`;
   month = monthElement.textContent;
 
   loadPage(month, year, currentPage);
@@ -164,6 +164,7 @@ async function loadPage(month, year, page) {
         headers: { Authorization: token },
       }
     );
+    console.log(response.data.expenses[0]);
 
     const monthList = document.getElementById("month-list");
     monthList.innerHTML = "";
@@ -171,7 +172,7 @@ async function loadPage(month, year, page) {
     let credit = 0;
     let debit = 0;
 
-    response.data.users.forEach((expense) => {
+    response.data.expenses.forEach((expense) => {
       credit += Number(expense.credit) || 0; // Convert credit to a number, default to 0 if undefined/null
       debit += Number(expense.debit) || 0; // Convert debit to a number, default to 0 if undefined/null
     });
@@ -179,8 +180,8 @@ async function loadPage(month, year, page) {
 
     document.getElementById("amount").innerHTML = total;
 
-    for (let i = 0; i < response.data.users.length; i++) {
-      const user = response.data.users[i];
+    for (let i = 0; i < response.data.expenses.length; i++) {
+      const user = response.data.expenses[i];
 
       // Create list item and populate content
       const listItem = document.createElement("li");
@@ -232,7 +233,7 @@ async function deleteItem(user, listItem) {
   try {
     console.log("delete function started");
     const token = localStorage.getItem("token");
-    const id = user.id;
+    const id = user._id;
     const response = await axios.delete(
       `http://localhost:5000/user/delete-expenses/${id}`,
       {
@@ -259,57 +260,7 @@ function changePage(direction) {
 }
 
 const y = year;
-
-// async function handleYearChange() {
-//   document.getElementById("year-list").innerHTML = "";
-//   const token = localStorage.getItem("token");
-//   const selectedDate = new Date(dateInput.value);
-//   var year = selectedDate.getFullYear();
-
-//   // Check for invalid date and handle it (optional)
-//   if (isNaN(year)) {
-//     year = y; // Use default year
-//   }
-
-//   yearElement.textContent = year;
-
-//   try {
-//     const response = await axios.get(
-//       `http://localhost:5000/user/get-expenses/${year}`,
-//       { headers: { Authorization: token } }
-//     );
-//     const YearList = document.getElementById("year-list");
-
-//     let credit = 0;
-//     let debit = 0;
-//     response.data.users.forEach((expense) => {
-//       credit += Number(expense.credit) || 0; // Convert credit to a number, default to 0 if undefined/null
-//       debit += Number(expense.debit) || 0; // Convert debit to a number, default to 0 if undefined/null
-//     });
-//     let total = credit - debit;
-//     document.getElementById("amount").innerHTML = total;
-
-//     for (let i = 0; i < response.data.users.length; i++) {
-//       const user = response.data.users[i];
-
-//       // Create list item and populate content
-//       const listItem = document.createElement("li");
-//       const div = document.createElement("div");
-//       div.id = "cont";
-//       div.textContent = `date: ${user.day} ${user.month}`;
-//       const div2 = document.createElement("div");
-//       div2.textContent = ` credit: ${user.credit}, debit: ${user.debit}, description: ${user.description}`;
-//       div2.className = "container mt-5>";
-//       div2.appendChild(div);
-//       listItem.appendChild(div2);
-
-//       // Append to the year list
-//       YearList.appendChild(listItem);
-//     }
-//   } catch (err) {
-//     console.error(err); // Handle errors from the API call
-//   }
-// }
+ 
 
 const dayy = day;
 const yearrr = year;
@@ -332,7 +283,7 @@ async function handleDateChange() {
   }
 
   dayElement.textContent = day;
-  monthElement.textContent = `${month},`;
+  monthElement.textContent = `${month}`;
   yearElement.textContent = year;
   weekdayElement.textContent = weekday;
   month = monthElement.textContent;

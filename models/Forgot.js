@@ -1,20 +1,10 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database'); // Corrected the path reference
- 
+const mongoose = require('mongoose');
 
-
-// Define the Order model with appropriate fields
-const Forgot = sequelize.define('ForgotPasswordRequests', {
-    id: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        primaryKey: true
-    },
-
-    isActive: {
-        type: Sequelize.STRING,
- 
-    }
+const forgotPasswordSchema = new mongoose.Schema({
+    id: { type: String, required: true, unique: true },
+    isActive: { type: Boolean, default: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference to User
 });
 
-module.exports = Forgot;
+const ForgotPasswordRequest = mongoose.model('ForgotPasswordRequest', forgotPasswordSchema);
+module.exports = ForgotPasswordRequest;

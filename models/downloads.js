@@ -1,19 +1,11 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database'); // Corrected the path reference
+const mongoose = require('mongoose');
 
-// Define the Order model with appropriate fields
-const Download = sequelize.define('download', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
-    url: {
-        type: Sequelize.STRING,
-                                 // Payment ID may be null initially for pending orders
-    }
-
+const downloadSchema = new mongoose.Schema({
+    url: { type: String, required: true },
+    signupEmail: { type: String, required: true }
 });
+
+// Check if model already exists before defining it
+const Download = mongoose.models.Download || mongoose.model('Download', downloadSchema);
 
 module.exports = Download;
