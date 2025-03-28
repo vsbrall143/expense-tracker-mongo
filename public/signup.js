@@ -13,8 +13,9 @@ async function signupForm(event) {
 
     try {
         const res = await axios.post(`https://expense-tracker-mongo-t8fj.onrender.com/user/signup`, userDetails);
-        console.log(res);
-        alert("Signup successful!");
+ 
+        notyf.success('signup sucess!');
+        window.location.href = "login.html";
     } catch (error) {
         if (error.response && error.response.data) {
             // Display the error message from the server
@@ -45,7 +46,7 @@ async function loginForm(event) {
         console.log(res);
         localStorage.setItem('token',res.data.token);
         window.location.href = "daily.html";
-        notyf.success('Message sent successfully!');
+        notyf.success('logged in successfully!');
     } catch (error) {
         if (error.response && error.response.data) {
             // Display the error message from the server
