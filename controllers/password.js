@@ -57,7 +57,7 @@ const resetPassword = async (req, res) => {
         console.log(id);
 
         // Find the forgot password request
-        const forgotPasswordRequest = await Forgot.findOne({ uuid: id }); 
+        const forgotPasswordRequest = await Forgot.findOne({ id }); 
 
         console.log(forgotPasswordRequest);
 
