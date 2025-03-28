@@ -53,12 +53,27 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
         console.log("reset link sent");
-        const id = req.params.uuid;
+        const id = req.params.uuid; // Assuming uuid is a separate field, not _id
         console.log(id);
-        const forgotPasswordRequest = await Forgot.findOne({ id });
+
+        // Find the forgot password request
+        const forgotPasswordRequest = await Forgot.findOne({ uuid: id }); 
+
         console.log(forgotPasswordRequest);
+
+        if (!forgotPasswordRequest) {
+            return res.status(404).json({ error: 'Invalid request', success: false });
+        }
+
         if (forgotPasswordRequest.isActive) {
-            await forgotPasswordRequest.update({ isActive: false });
+            console.log("iin");
+
+            // Update isActive status
+            forgotPasswordRequest.isActive = false;
+            await forgotPasswordRequest.save(); // Correct way to update in Mongoose
+
+            console.log("nn");
+
             res.status(200).send(`
                 <html>
                     <script>
@@ -76,12 +91,14 @@ const resetPassword = async (req, res) => {
                 </html>
             `);
         } else {
-            res.status(404).json({ error: 'Invalid request', success: false });
+            res.status(400).json({ error: 'Invalid or expired request', success: false });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Internal Server Error', success: false });
     }
 };
+
 
 const updatePassword = async (req, res) => {
     try {
