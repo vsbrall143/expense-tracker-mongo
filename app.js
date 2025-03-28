@@ -32,16 +32,28 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:"],
-        objectSrc: ["'none'"],
-        imgSrc: ["'self'", "data:"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "blob:",
+          "https://cdn.jsdelivr.net",
+          "https://infird.com"
+        ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://cdn.jsdelivr.net"
+        ],
+        fontSrc: ["'self'", "https://cdn.jsdelivr.net"],
         connectSrc: ["'self'", "https://expense-tracker-mongo-t8fj.onrender.com"],
+        imgSrc: ["'self'", "data:"],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
       },
     },
   })
 );
-
 
 app.use(morgan('combined', { stream: accessLogStream }));
  
