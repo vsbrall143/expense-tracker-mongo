@@ -32,7 +32,7 @@ const forgotPassword = async (req, res) => {
         const signupEmail=req.body.email;
         const isActive=true;
 
-        const data = await Forgot.create({id,signupEmail,isActive});
+        const data = await Forgot.create({id,isActive});
       
         const emailResponse = await tranEmailApi.sendTransacEmail({
             sender,
