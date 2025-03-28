@@ -52,6 +52,7 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
+        console.log("reset link sent");
         const id = req.params.uuid;
 
         const forgotPasswordRequest = await Forgot.findOne({ where: { id } });
