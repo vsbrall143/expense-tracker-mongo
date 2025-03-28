@@ -93,12 +93,12 @@ const updatePassword = async (req, res) => {
             return res.status(400).json({ error: 'Password is required', success: false });
         }
 
-        const resetPasswordRequest = await Forgot.findOne({ where: { id: resetpasswordid } });
+        const resetPasswordRequest = await Forgot.findOne({ id: resetpasswordid });
         if (!resetPasswordRequest) {
             return res.status(404).json({ error: 'Invalid reset request', success: false });
         }
 
-        const user = await signup.findOne({ where: { email: resetPasswordRequest.signupEmail } });
+        const user = await signup.findOne({ email: resetPasswordRequest.signupEmail } );
         if (!user) {
             return res.status(404).json({ error: 'User not found', success: false });
         }
