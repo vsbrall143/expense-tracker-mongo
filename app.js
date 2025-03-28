@@ -40,6 +40,7 @@ app.use(
           "https://cdn.jsdelivr.net",
           "https://infird.com"
         ],
+        scriptSrcAttr: ["'self'", "'unsafe-inline'"], // ✅ Add this line
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
