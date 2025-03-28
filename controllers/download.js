@@ -1,7 +1,7 @@
 require('dotenv').config();
 const Expense = require('../models/Expense');
 const User = require('../models/User');
-const Downloads = require('../models/Downloads');
+const Downloads = require('../models/downloads');
 
 const { v1: uuidv1 } = require('uuid');
 const { BlobServiceClient, StorageSharedKeyCredential, generateBlobSASQueryParameters, BlobSASPermissions } = require('@azure/storage-blob');
