@@ -11,20 +11,6 @@ const cors = require('cors');
 
  
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:"],
-        objectSrc: ["'none'"],
-        imgSrc: ["'self'", "data:"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        connectSrc: ["'self'", "https://expense-tracker-mongo-t8fj.onrender.com"],
-      },
-    },
-  })
-);
 
 
 const Expense = require('./models/Expense');
@@ -41,6 +27,22 @@ const accessLogStream = fs.createWriteStream(
   { flags: 'a' }
 );
 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:"],
+        objectSrc: ["'none'"],
+        imgSrc: ["'self'", "data:"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'", "https://expense-tracker-mongo-t8fj.onrender.com"],
+      },
+    },
+  })
+);
+
+
 app.use(morgan('combined', { stream: accessLogStream }));
  
 app.use(compression());
@@ -50,6 +52,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(userroutes);
+const PORT = process.env.PORT || 3000;
 
 mongoose
   .connect(
@@ -57,7 +60,9 @@ mongoose
   )
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(5000, () => console.log('Server running on port 5000'));
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
   })
   .catch(err => {
     console.error('MongoDB connection error:', err);
