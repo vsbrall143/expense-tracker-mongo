@@ -26,35 +26,24 @@ const accessLogStream = fs.createWriteStream(
   path.join(__dirname, 'access.log'),
   { flags: 'a' }
 );
-
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "'unsafe-eval'",
-          "blob:",
-          "https://cdn.jsdelivr.net",
-          "https://infird.com"
-        ],
-        scriptSrcAttr: ["'self'", "'unsafe-inline'"], // ✅ Add this line
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "https://cdn.jsdelivr.net"
-        ],
-        fontSrc: ["'self'", "https://cdn.jsdelivr.net"],
-        connectSrc: ["'self'", "https://expense-tracker-mongo-t8fj.onrender.com"],
-        imgSrc: ["'self'", "data:"],
-        objectSrc: ["'none'"],
-        frameAncestors: ["'none'"],
+        defaultSrc: ["*"], // Allow everything from everywhere
+        scriptSrc: ["*","'unsafe-inline'","'unsafe-eval'"],
+        scriptSrcAttr: ["*","'unsafe-inline'"],
+        styleSrc: ["*","'unsafe-inline'"],
+        fontSrc: ["*"],
+        connectSrc: ["*"],
+        imgSrc: ["*","data:"],
+        objectSrc: ["*"],
+        frameAncestors: ["*"],
       },
     },
   })
 );
+
 
 app.use(morgan('combined', { stream: accessLogStream }));
  
