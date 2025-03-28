@@ -133,7 +133,8 @@ const updatePassword = async (req, res) => {
                     throw new Error('Error hashing password');
                 }
 
-                await signup.update({ password: hash }, { where: { email: user.email } });
+                        user.password = hash;
+                        await user.save();
                 res.status(201).json({ message: 'Password updated successfully', success: true });
 
             });
