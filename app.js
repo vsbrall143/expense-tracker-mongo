@@ -9,6 +9,24 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const cors = require('cors');
 
+ 
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:"],
+        objectSrc: ["'none'"],
+        imgSrc: ["'self'", "data:"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'", "https://expense-tracker-mongo-t8fj.onrender.com"],
+      },
+    },
+  })
+);
+
+
 const Expense = require('./models/Expense');
 const User = require('./models/User');
 const Order = require('./models/orders');
@@ -24,7 +42,7 @@ const accessLogStream = fs.createWriteStream(
 );
 
 app.use(morgan('combined', { stream: accessLogStream }));
-app.use(helmet());
+ 
 app.use(compression());
 app.use(cors());
 app.use(bodyParser.json());
