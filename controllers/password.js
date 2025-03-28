@@ -57,7 +57,7 @@ const resetPassword = async (req, res) => {
         console.log(id);
         const forgotPasswordRequest = await Forgot.findOne({ id });
         console.log(forgotPasswordRequest);
-        if (forgotPasswordRequest) {
+        if (forgotPasswordRequest.isActive) {
             await forgotPasswordRequest.update({ isActive: false });
             res.status(200).send(`
                 <html>
