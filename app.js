@@ -30,19 +30,25 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["*"], // Allow everything from everywhere
-        scriptSrc: ["*","'unsafe-inline'","'unsafe-eval'"],
+        defaultSrc: ["*"],
+        scriptSrc: ["*","'unsafe-inline'","'unsafe-eval'","blob:"],
         scriptSrcAttr: ["*","'unsafe-inline'"],
         styleSrc: ["*","'unsafe-inline'"],
         fontSrc: ["*"],
         connectSrc: ["*"],
         imgSrc: ["*","data:"],
+        mediaSrc: ["*"],
         objectSrc: ["*"],
+        frameSrc: ["*"],
+        workerSrc: ["*","blob:"],
         frameAncestors: ["*"],
+        formAction: ["*"], // ✅ Allows form submissions from anywhere
       },
     },
+    crossOriginResourcePolicy: false, // ✅ Allows cross-origin requests
   })
 );
+
 
 
 app.use(morgan('combined', { stream: accessLogStream }));
