@@ -62,3 +62,4 @@ async function loginForm(event) {
 
 // Attach the `loginForm` function to the form submission
 document.querySelector("form").addEventListener("submit", loginForm);
+document.getElementById("signupForm").addEventListener("submit", signupForm);
